@@ -90,7 +90,7 @@ class Zend_Gdata_Analytics_AccountEntry extends Zend_Gdata_Entry
                 $this->_tableId = $tableId;
                 break;
             case $this->lookupNamespace('ga') . ':' . 'goal';
-                $goal = new Zend_Gdata_Analytics_Extension_Goal();
+                $goal = new Zend_Gdata_Analytics_Goal();
                 $goal->transferFromDOM($child);
                 $this->_goal = $goal;
                 break;
