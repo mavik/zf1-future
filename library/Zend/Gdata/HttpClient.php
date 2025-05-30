@@ -298,7 +298,7 @@ class Zend_Gdata_HttpClient extends Zend_Http_Client
      */
     public function getStreamingRequest()
     {
-        if ($this->_streamingRequest()) {
+        if ($this->_streamingRequest) {
             return true;
         } else {
             return false;
