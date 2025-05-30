@@ -1266,22 +1266,10 @@ class Zend_Http_Client
         if (isset($this->raw_post_data) && is_resource($this->raw_post_data)) {
             return $this->raw_post_data;
         }
-        // If mbstring overloads substr and strlen functions, we have to
-        // override it's internal encoding
-        if (function_exists('mb_internal_encoding') &&
-           ((int) ini_get('mbstring.func_overload')) & 2) {
-
-            $mbIntEnc = mb_internal_encoding();
-            mb_internal_encoding('ASCII');
-        }
 
         // If we have raw_post_data set, just use it as the body.
         if (isset($this->raw_post_data)) {
             $this->setHeaders(self::CONTENT_LENGTH, strlen($this->raw_post_data));
-            if (isset($mbIntEnc)) {
-                mb_internal_encoding($mbIntEnc);
-            }
-
             return $this->raw_post_data;
         }
 
@@ -1336,10 +1324,6 @@ class Zend_Http_Client
                     break;
 
                 default:
-                    if (isset($mbIntEnc)) {
-                        mb_internal_encoding($mbIntEnc);
-                    }
-
                     /** @see Zend_Http_Client_Exception */
                     require_once 'Zend/Http/Client/Exception.php';
                     throw new Zend_Http_Client_Exception("Cannot handle content type '{$this->enctype}' automatically." .
@@ -1351,10 +1335,6 @@ class Zend_Http_Client
         // Set the Content-Length if we have a body or if request is POST/PUT
         if ($body || $this->method == self::POST || $this->method == self::PUT) {
             $this->setHeaders(self::CONTENT_LENGTH, strlen($body));
-        }
-
-        if (isset($mbIntEnc)) {
-            mb_internal_encoding($mbIntEnc);
         }
 
         return $body;

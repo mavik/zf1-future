@@ -754,12 +754,7 @@ class Zend_OpenId
      */
     static public function strlen($str)
     {
-        if (extension_loaded('mbstring') &&
-            (((int)ini_get('mbstring.func_overload')) & 2)) {
-            return mb_strlen($str, 'latin1');
-        } else {
-            return strlen($str);
-        }
+        return strlen($str);
     }
 
 }
