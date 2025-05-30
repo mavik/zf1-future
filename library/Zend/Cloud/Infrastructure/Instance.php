@@ -186,7 +186,7 @@ class Zend_Cloud_Infrastructure_Instance
      * @param  integer $timeout
      * @return boolean
      */
-    public function waitStatus($status, $timeout = Adapter::TIMEOUT_STATUS_CHANGE)
+    public function waitStatus($status, $timeout = Zend_Cloud_Infrastructure_Adapter::TIMEOUT_STATUS_CHANGE)
     {
         return $this->adapter->waitStatusInstance($this->attributes[self::INSTANCE_ID], $status, $timeout);
     }
