@@ -95,7 +95,7 @@ class Zend_Gdata_Analytics extends Zend_Gdata
      */
     public function getAccountFeed($uri = self::ANALYTICS_ACCOUNT_FEED_URI)
     {
-        if ($uri instanceof Query) {
+        if ($uri instanceof Zend_Gdata_Query) {
             $uri = $uri->getQueryUrl();
         }
         return parent::getFeed($uri, 'Zend_Gdata_Analytics_AccountFeed');
