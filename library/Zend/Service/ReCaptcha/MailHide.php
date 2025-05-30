@@ -37,8 +37,8 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
     /**#@+
      * Encryption constants
      */
-    public const ENCRYPTION_MODE = MCRYPT_MODE_CBC;
-    public const ENCRYPTION_CIPHER = MCRYPT_RIJNDAEL_128;
+    public const ENCRYPTION_MODE = 'cbc';
+    public const ENCRYPTION_CIPHER = 'aes-128-cbc';
     public const ENCRYPTION_BLOCK_SIZE = 16;
     public const ENCRYPTION_IV = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
     /**#@-*/
@@ -115,7 +115,6 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
         }
     }
 
-
     /**
      * Get emailValidator
      *
@@ -142,19 +141,18 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
         return $this;
     }
 
-
     /**
-     * See if the mcrypt extension is available
+     * See if the openssl extension is available
      *
      * @throws Zend_Service_ReCaptcha_MailHide_Exception
      */
     protected function _requireMcrypt()
     {
-        if (!extension_loaded('mcrypt')) {
+        if (!extension_loaded('openssl')) {
             /** @see Zend_Service_ReCaptcha_MailHide_Exception */
             require_once 'Zend/Service/ReCaptcha/MailHide/Exception.php';
 
-            throw new Zend_Service_ReCaptcha_MailHide_Exception('Use of the Zend_Service_ReCaptcha_MailHide component requires the mcrypt extension to be enabled in PHP');
+            throw new Zend_Service_ReCaptcha_MailHide_Exception('Use of the Zend_Service_ReCaptcha_MailHide component requires the openssl extension to be enabled in PHP');
         }
     }
 
@@ -207,7 +205,7 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
         parent::setPrivateKey($privateKey);
 
         /* Pack the private key into a binary string */
-        $this->_privateKeyPacked = pack('H*', $this->_privateKey);
+        $this->_privateKeyPacked = $this->_privateKey;
 
         return $this;
     }
@@ -311,7 +309,7 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
 
         $enc = $this->getOption('encoding');
 
-        /* Genrate the HTML used to represent the email address */
+        /* Generate the HTML used to represent the email address */
         return htmlentities($this->getEmailLocalPart(), ENT_COMPAT, $enc)
             . '<a href="'
                 . htmlentities($url, ENT_COMPAT, $enc)
@@ -340,8 +338,14 @@ class Zend_Service_ReCaptcha_MailHide extends Zend_Service_ReCaptcha
         /* Pad the email */
         $emailPadded = str_pad($this->_email, strlen($this->_email) + $numPad, chr($numPad));
 
-        /* Encrypt the email */
-        $emailEncrypted = mcrypt_encrypt(self::ENCRYPTION_CIPHER, $this->_privateKeyPacked, $emailPadded, self::ENCRYPTION_MODE, self::ENCRYPTION_IV);
+        /* Encrypt the email using OpenSSL */
+        $emailEncrypted = openssl_encrypt(
+            $emailPadded,
+            self::ENCRYPTION_CIPHER,
+            $this->_privateKeyPacked,
+            OPENSSL_RAW_DATA,
+            self::ENCRYPTION_IV
+        );
 
         /* Return the url */
         return self::MAILHIDE_SERVER . '?k=' . $this->_publicKey . '&c=' . strtr(base64_encode($emailEncrypted), '+/', '-_');
