@@ -397,7 +397,7 @@ class Zend_Gdata_Query
     {
         $method = 'get'.ucfirst($name);
         if (method_exists($this, $method)) {
-            return call_user_func([&$this, $method]);
+            return call_user_func([$this, $method]);
         } else {
             require_once 'Zend/Gdata/App/Exception.php';
             throw new Zend_Gdata_App_Exception('Property ' . $name . '  does not exist');
@@ -408,7 +408,7 @@ class Zend_Gdata_Query
     {
         $method = 'set'.ucfirst($name);
         if (method_exists($this, $method)) {
-            return call_user_func([&$this, $method], $val);
+            return call_user_func([$this, $method], $val);
         } else {
             require_once 'Zend/Gdata/App/Exception.php';
             throw new Zend_Gdata_App_Exception('Property ' . $name . '  does not exist');

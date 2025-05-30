@@ -318,7 +318,7 @@ class Zend_Session_SaveHandler_DbTable
     {
         $return = '';
 
-        $rows = call_user_func_array([&$this, 'find'], $this->_getPrimary($id));
+        $rows = call_user_func_array([$this, 'find'], $this->_getPrimary($id));
 
         if (count($rows)) {
             if ($this->_getExpirationTime($row = $rows->current()) > time()) {
@@ -343,7 +343,7 @@ class Zend_Session_SaveHandler_DbTable
         $data = [$this->_modifiedColumn => time(),
                       $this->_dataColumn     => (string) $data];
 
-        $rows = call_user_func_array([&$this, 'find'], $this->_getPrimary($id));
+        $rows = call_user_func_array([$this, 'find'], $this->_getPrimary($id));
 
         if (count($rows)) {
             $data[$this->_lifetimeColumn] = $this->_getLifetime($rows->current());

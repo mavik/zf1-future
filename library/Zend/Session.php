@@ -279,12 +279,12 @@ class Zend_Session extends Zend_Session_Abstract
         }
 
         $result = session_set_save_handler(
-            [&$saveHandler, 'open'],
-            [&$saveHandler, 'close'],
-            [&$saveHandler, 'read'],
-            [&$saveHandler, 'write'],
-            [&$saveHandler, 'destroy'],
-            [&$saveHandler, 'gc']
+            [$saveHandler, 'open'],
+            [$saveHandler, 'close'],
+            [$saveHandler, 'read'],
+            [$saveHandler, 'write'],
+            [$saveHandler, 'destroy'],
+            [$saveHandler, 'gc']
             );
         register_shutdown_function('session_write_close');
 
