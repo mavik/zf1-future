@@ -530,27 +530,26 @@ class Zend_Session extends Zend_Session_Abstract
      */
     protected static function _checkId($id)
     {
-        $saveHandler = ini_get('session.save_handler');
-        if ($saveHandler == 'cluster') { // Zend Server SC, validate only after last dash
-            $dashPos = strrpos($id, '-');
-            if ($dashPos) {
-                $id = substr($id, $dashPos + 1);
+        $len = strlen($id);
+        if ($len < 16 || $len > 128) {
+            return false;
+        }
+
+        $formats = [
+            ['pattern' => '/^[0-9a-f]+$/',          'bits' => 4],  // hex
+            ['pattern' => '/^[0-9a-v]+$/i',         'bits' => 5],  // base32
+            ['pattern' => '/^[0-9A-Za-z,-]+$/',     'bits' => 6],  // base64-like
+        ];
+
+        foreach ($formats as $format) {
+            if (preg_match($format['pattern'], $id)) {
+                $entropy = $len * $format['bits'];
+                return $entropy >= 128;
             }
         }
 
-        $hashBitsPerChar = ini_get('session.sid_bits_per_character');
-        if (!$hashBitsPerChar) {
-            $hashBitsPerChar = 5; // the default value
-        }
-        $pattern = '';
-        switch($hashBitsPerChar) {
-            case 4: $pattern = '^[0-9a-f]*$'; break;
-            case 5: $pattern = '^[0-9a-v]*$'; break;
-            case 6: $pattern = '^[0-9a-zA-Z-,]*$'; break;
-        }
-        return preg_match('#'.$pattern.'#', $id);
+        return false;
     }
-
 
     /**
      * _processGlobalMetadata() - this method initizes the sessions GLOBAL
