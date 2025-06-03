@@ -1,0 +1,9 @@
+parameters:
+    level: 0
+    phpVersion: 80400
+    fileExtensions:
+        - php
+    excludePaths:
+        - vendor/
+        - tests/
+        - demos/
